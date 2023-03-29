@@ -1,5 +1,50 @@
 const defaults = require("./Tournaments-defaults");
 
+/*
+
+How to start a new tournament?
+
+let myTournament = new Tournament("chess-swiss-league")
+
+myTournament.updateOptions({
+    name: null,
+  clock: {
+    limit: 180,
+    increment: 2,
+  },
+  nbRounds: 5,
+  startsAt: null,
+  roundInterval: null,
+  variant: "standard",
+  description: null,
+  rated: true,
+  password: null,
+  forbiddenPairings: null,
+  manualPairings: null,
+  chatFor: 30,
+  conditions: {
+    minRating: { rating: null },
+    maxRating: { rating: null },
+    nbRatedGame: { nb: null },
+    allowList: null,
+  },
+})
+
+myTournament.start()
+
+
+How to update an existing tournament?
+
+let myTournament = new Tournament()
+
+myTournament.APIoptions = myTournament.getInfo('SomeTournamentID')
+
+myTournament.updateAPIOptions({ ...})
+
+myTournament.update()
+
+*/
+
 class Tournament {
   constructor(
     teamID,
@@ -44,45 +89,38 @@ class Tournament {
       body: JSON.stringify(this.APIoptions),
     };
 
-    //CREATE
-    if (!this.APIoptions.id) {
-      fetch(`https://lichess.org/api/swiss/new/${this.teamID}`, options)
-        .then((res) => res.json())
-        .then((data) => this.updateAPIOptions(data))
-        .then(console.log);
-
-      let round = 0;
-      setInterval(async () => {
-        let data = await this.getInfo();
-        console.log(data);
-        if (data.round != round) {
-          round = data.round;
-          console.log(`Round ${round}`);
-        }
-      }, 30000);
-
-      //UPDATE
-    } else {
-      console.log("Update");
-
-      fetch(`https://lichess.org/api/swiss/${this.APIoptions.id}/edit`, options)
-        .then((res) => res.json())
-        .then((data) => this.updateAPIOptions(data))
-        .then(console.log);
-    }
+    fetch(`https://lichess.org/api/swiss/new/${this.teamID}`, options)
+      .then((res) => res.json())
+      .then((data) => this.updateAPIOptions(data))
+      .then(console.log);
   }
 
-  async getInfo() {
+  update() {
     const options = {
       headers: {
         Authorization: "Bearer " + process.env.lichessToken,
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(this.APIoptions),
+    };
+
+    fetch(`https://lichess.org/api/swiss/${this.APIoptions.id}/edit`, options)
+      .then((res) => res.json())
+      .then((data) => this.updateAPIOptions(data))
+      .then(console.log);
+  }
+
+  read() {
+    const options = {
+      headers: {
+        Authorization: "Bearer " + process.env.lichessToken,
+        "Content-Type": "application/json",
       },
       method: "GET",
     };
-    return await fetch(
-      `https://lichess.org/api/swiss/${this.APIoptions.id}`,
-      options
-    )
+
+    fetch(`https://lichess.org/api/swiss/${this.APIoptions.id}`, options)
       .then((res) => res.json())
       .then(console.log);
   }
