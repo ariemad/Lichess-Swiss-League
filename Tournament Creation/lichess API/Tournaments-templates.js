@@ -1,6 +1,6 @@
 let defaults = {};
 
-defaults["Bullet_1+0"] = {
+defaults["bullet"] = {
   name: null,
   clock: {
     limit: 60,
@@ -24,7 +24,7 @@ defaults["Bullet_1+0"] = {
   },
 };
 
-defaults["Blitz_3+2"] = {
+defaults["blitz"] = {
   name: null,
   clock: {
     limit: 180,
@@ -48,7 +48,7 @@ defaults["Blitz_3+2"] = {
   },
 };
 
-defaults["Rapid_10+0"] = {
+defaults["rapid"] = {
   name: null,
   clock: {
     limit: 600,

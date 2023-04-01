@@ -1,4 +1,6 @@
-const defaults = require("./Tournaments-defaults");
+const defaults = require("./Tournaments-templates");
+
+require("dotenv").config();
 
 /*
 
@@ -48,17 +50,18 @@ myTournament.update()
 class Tournament {
   constructor(
     teamID,
-    tournamentOptions = {
-      type: "Blitz_3+2",
-      roundStarts: { type: "default", schedule: [] },
-    }
+    type = "blitz",
+    API_Options = {},
+    otherOptions = { creationTime: "now" }
   ) {
     this.teamID = teamID;
+    this.type = type;
 
-    this.tournamentOptions = tournamentOptions;
+    this.API_Options = {};
+    this.updateAPIOptions(defaults[this.type]);
+    this.updateAPIOptions(API_Options);
 
-    this.APIoptions = {};
-    this.updateAPIOptions(defaults[this.tournamentOptions.type]);
+    this.otherOptions = otherOptions;
   }
 
   updateAPIOptions(object) {
@@ -75,24 +78,27 @@ class Tournament {
       return temp;
     };
 
-    this.APIoptions = { ...this.APIoptions, ...recursive(object) };
-    return this.APIoptions;
+    this.API_Options = { ...this.API_Options, ...recursive(object) };
+    return this.API_Options;
   }
 
-  start() {
+  async start() {
     const options = {
       headers: {
         Authorization: "Bearer " + process.env.lichessToken,
         "Content-Type": "application/json",
       },
       method: "POST",
-      body: JSON.stringify(this.APIoptions),
+      body: JSON.stringify(this.API_Options),
     };
 
-    fetch(`https://lichess.org/api/swiss/new/${this.teamID}`, options)
-      .then((res) => res.json())
-      .then((data) => this.updateAPIOptions(data))
-      .then(console.log);
+    return new Promise((resolve, reject) => {
+      fetch(`https://lichess.org/api/swiss/new/${this.teamID}`, options)
+        .then((res) => res.json())
+        .then((data) => this.updateAPIOptions(data))
+        .then(console.log)
+        .then(resolve);
+    });
   }
 
   update() {
@@ -102,16 +108,16 @@ class Tournament {
         "Content-Type": "application/json",
       },
       method: "POST",
-      body: JSON.stringify(this.APIoptions),
+      body: JSON.stringify(this.API_Options),
     };
 
-    fetch(`https://lichess.org/api/swiss/${this.APIoptions.id}/edit`, options)
+    fetch(`https://lichess.org/api/swiss/${this.API_Options.id}/edit`, options)
       .then((res) => res.json())
       .then((data) => this.updateAPIOptions(data))
       .then(console.log);
   }
 
-  read() {
+  read(id = this.API_Options.id) {
     const options = {
       headers: {
         Authorization: "Bearer " + process.env.lichessToken,
@@ -120,7 +126,7 @@ class Tournament {
       method: "GET",
     };
 
-    fetch(`https://lichess.org/api/swiss/${this.APIoptions.id}`, options)
+    fetch(`https://lichess.org/api/swiss/${id}`, options)
       .then((res) => res.json())
       .then(console.log);
   }
@@ -134,7 +140,7 @@ class Tournament {
     };
 
     fetch(
-      `https://lichess.org/api/swiss/${this.APIoptions.id}/terminate`,
+      `https://lichess.org/api/swiss/${this.API_Options.id}/terminate`,
       options
     )
       .then((res) => res.json())
