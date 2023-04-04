@@ -1,4 +1,9 @@
-let tournamentDefault = {
+const Tournament = require("../lichess API/Tournament");
+
+let myTournament = new Tournament("chess-swiss-league");
+
+myTournament.updateAPIOptions({
+  id: "",
   name: null,
   clock: {
     limit: 180,
@@ -20,6 +25,6 @@ let tournamentDefault = {
     nbRatedGame: { nb: null },
     allowList: null,
   },
-};
+});
 
-module.exports = tournamentDefault;
+myTournament.terminate();
