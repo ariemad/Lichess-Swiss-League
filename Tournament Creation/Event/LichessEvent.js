@@ -1,5 +1,3 @@
-//Tournaments types:
-
 const { log } = require("debug/src/node");
 const Tournament = require("../lichess API/Tournament");
 const {
