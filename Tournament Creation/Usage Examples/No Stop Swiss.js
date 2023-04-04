@@ -3,8 +3,8 @@ const LichessEvent = require("../Event/LichessEvent");
 let myEvent = new LichessEvent("chess-swiss-league", {
   repeat: true,
   numberTournaments: Infinity,
-  creationTime: "2023-04-01T23:52:00.000Z",
-  startingTime: "2023-04-01T23:53:00.000Z",
+  creationTime: "2023-01-01T00:00:00.000Z",
+  startingTime: process.env.startTime,
   numberOffset: 1,
 });
 
