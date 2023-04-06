@@ -86,13 +86,25 @@ class Tournament {
     return new Promise((resolve, reject) => {
       fetch(`https://lichess.org/api/swiss/new/${this.teamID}`, options)
         .then((res) => res.json())
-        .then((data) => this.updateAPIOptions(data))
-        .then(console.log)
-        .then(resolve);
+        .then((data) => {
+          this.updateAPIOptions(data);
+
+          console.log(
+            `
+          ${new Date().toISOString()}
+          Starting Tournament
+          ID: ${data.id}
+          `
+          );
+          resolve();
+        });
     });
   }
 
-  update() {
+  update(object) {
+    if (object) {
+      this.updateAPIOptions(object);
+    }
     const options = {
       headers: {
         Authorization: "Bearer " + process.env.lichessToken,
@@ -108,9 +120,17 @@ class Tournament {
         options
       )
         .then((res) => res.json())
-        .then((data) => this.updateAPIOptions(data))
-        .then(console.log)
-        .then(resolve);
+        .then((data) => {
+          this.updateAPIOptions(data);
+          console.log(
+            `
+          ${new Date().toISOString()}
+          Updating Tournament
+          ID: ${data.id}
+          `
+          );
+          resolve();
+        });
     });
   }
 
@@ -142,6 +162,24 @@ class Tournament {
     )
       .then((res) => res.json())
       .then(console.log);
+  }
+
+  last() {
+    return new Promise((resolve, reject) => {
+      const options = {
+        headers: {
+          Authorization: "Bearer " + process.env.lichessToken,
+        },
+        method: "GET",
+      };
+
+      fetch(`https://lichess.org/api/team/${this.teamID}/swiss?max=1`, options)
+        .then((res) => res.json())
+        .then((data) => {
+          this.updateAPIOptions(data);
+          resolve();
+        });
+    });
   }
 }
 
