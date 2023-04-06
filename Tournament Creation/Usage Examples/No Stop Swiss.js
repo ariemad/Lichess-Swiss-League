@@ -17,7 +17,7 @@ let settings = {
   roundInterval: null,
   variant: "standard",
   description: null,
-  rated: false,
+  rated: true,
   password: null,
   forbiddenPairings: null,
   manualPairings: null,
