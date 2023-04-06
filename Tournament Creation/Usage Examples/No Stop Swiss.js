@@ -1,11 +1,9 @@
-const LichessEvent = require("../Event/LichessEvent");
+const LichessEvent = require("../LichessEvent/LichessEvent");
 
 let myEvent = new LichessEvent("chess-swiss-league", {
   repeat: true,
   numberTournaments: Infinity,
   creationTime: "2023-01-01T00:00:00.000Z",
-  startingTime: process.env.startTime,
-  numberOffset: 1,
 });
 
 let settings = {
@@ -14,7 +12,7 @@ let settings = {
     limit: 180,
     increment: 2,
   },
-  nbRounds: 3,
+  nbRounds: 5,
   startsAt: null,
   roundInterval: null,
   variant: "standard",
