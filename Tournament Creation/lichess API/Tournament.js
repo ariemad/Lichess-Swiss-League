@@ -2,51 +2,6 @@ const tournamentDefault = require("./Tournaments-templates");
 
 require("dotenv").config();
 
-/*
-
-How to start a new tournament?
-
-let myTournament = new Tournament("chess-swiss-league")
-
-myTournament.updateOptions({
-    name: null,
-  clock: {
-    limit: 180,
-    increment: 2,
-  },
-  nbRounds: 5,
-  startsAt: null,
-  roundInterval: null,
-  variant: "standard",
-  description: null,
-  rated: true,
-  password: null,
-  forbiddenPairings: null,
-  manualPairings: null,
-  chatFor: 30,
-  conditions: {
-    minRating: { rating: null },
-    maxRating: { rating: null },
-    nbRatedGame: { nb: null },
-    allowList: null,
-  },
-})
-
-myTournament.start()
-
-
-How to update an existing tournament?
-
-let myTournament = new Tournament()
-
-myTournament.APIoptions = myTournament.getInfo('SomeTournamentID')
-
-myTournament.updateAPIOptions({ ...})
-
-myTournament.update()
-
-*/
-
 class Tournament {
   constructor(teamID, API_Options = {}) {
     this.teamID = teamID;
@@ -179,6 +134,30 @@ class Tournament {
           this.updateAPIOptions(data);
           resolve();
         });
+    });
+  }
+
+  results(id = this.API_Options.id, n = 1) {
+    return new Promise((resolve, reject) => {
+      const options = {
+        headers: {
+          Authorization: "Bearer " + process.env.lichessToken,
+          "Content-Type": "application/x-ndjson",
+        },
+        method: "GET",
+      };
+      const url = new URL(`https://lichess.org/api/swiss/${id}/results`);
+      url.searchParams.append("nb", n);
+
+      fetch(url.href, options)
+        .then((res) => res.text())
+        .then((data) =>
+          data
+            .split("\n")
+            .slice(0, -1)
+            .map((element) => JSON.parse(element))
+        )
+        .then(resolve);
     });
   }
 }

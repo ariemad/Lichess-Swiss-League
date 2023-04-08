@@ -62,4 +62,19 @@ function continuousCheckEnd(id, cb) {
   }, 30000);
 }
 
-module.exports = { waitUntil, waitFor, waitStatus, continuousCheckEnd };
+function parsePodium(winners) {
+  let string = "";
+  for (let i = 0; i < 3; i++) {
+    string += `${i + 1} - lichess.org/@/${winners[i].username} \n`;
+  }
+
+  return string;
+}
+
+module.exports = {
+  waitUntil,
+  waitFor,
+  waitStatus,
+  continuousCheckEnd,
+  parsePodium,
+};

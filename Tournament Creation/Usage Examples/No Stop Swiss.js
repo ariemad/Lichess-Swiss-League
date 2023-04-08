@@ -7,16 +7,24 @@ let myEvent = new LichessEvent("chess-swiss-league", {
 });
 
 let settings = {
-  name: "No Stop Swiss ###",
+  name: "No Stop Swiss #1#",
   clock: {
-    limit: 180,
-    increment: 2,
+    limit: 300,
+    increment: 3,
   },
   nbRounds: 5,
   startsAt: null,
   roundInterval: null,
   variant: "standard",
-  description: null,
+  description: `Welcome to "No Stop Swiss #1#"
+
+Last Tournament Winners were:
+#podium#
+
+We invite you to join "No Stop Swiss #2#" that will start immediately after.
+
+Number of rounds varies with the number of players.
+    `,
   rated: true,
   password: null,
   forbiddenPairings: null,
