@@ -65,7 +65,9 @@ function continuousCheckEnd(id, cb) {
 function parsePodium(winners) {
   let string = "";
   for (let i = 0; i < 3; i++) {
-    string += `${i + 1} - lichess.org/@/${winners[i].username} \n`;
+    if (winners[i]) {
+      string += `${i + 1} - lichess.org/@/${winners[i].username} \n`;
+    }
   }
 
   return string;
