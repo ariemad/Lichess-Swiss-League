@@ -4,9 +4,8 @@ const {
   waitUntil,
   waitTournamentEnd,
   waitFor,
-  continuousCheckEnd,
-  waitStatus,
   parsePodium,
+  roundTime,
 } = require("./auxiliaryFunctions");
 require("dotenv").config();
 
@@ -98,15 +97,9 @@ class LichessEvent {
 
   async updateLastWinner(tournament) {
     this.eventProperties.lastWinners = await tournament.results(undefined, 3);
-    console.log(this.eventProperties.lastWinner);
   }
 
   async updateEvent() {
-    console.log(`
-    ${new Date().toISOString()}
-    Updating Event
-    `);
-
     // Get current tournament of team
     let currentTournament = new Tournament(this.teamID);
     await currentTournament.last();
@@ -120,19 +113,20 @@ class LichessEvent {
       this.addTournament();
       //
     } else if (currentTournament.API_Options.status == "created") {
-      if (currentTournament.API_Options.nextRound.in < 60) {
+      if (
+        currentTournament.API_Options.nextRound.in < 60 &&
+        currentTournament.API_Options.nbPlayers < 4
+      ) {
         //1 minute before tournament starts
-        if (currentTournament.API_Options.nbPlayers < 2) {
-          currentTournament.update({
-            startsAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-          });
-        }
+        currentTournament.update({
+          startsAt: roundTime().toISOString(),
+        });
       }
       let newRound = Math.max(
         3,
         Math.ceil(Math.sqrt(currentTournament.API_Options.nbPlayers) + 1)
       );
-      if (currentTournament.API_Options.round != newRound) {
+      if (currentTournament.API_Options.nbRounds != newRound) {
         currentTournament.update({
           nbRounds: newRound,
         });

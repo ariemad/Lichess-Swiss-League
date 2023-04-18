@@ -23,7 +23,11 @@ Last Tournament Winners were:
 
 We invite you to join "No Stop Swiss #2#" that will start immediately after.
 
-Number of rounds varies with the number of players.
+Minimum players to start:
+4
+
+Number of rounds:
+According to number of players.
     `,
   rated: true,
   password: null,
@@ -41,5 +45,3 @@ Number of rounds varies with the number of players.
 myEvent.addTournamentSettings(settings);
 
 myEvent.start();
-
-console.log();

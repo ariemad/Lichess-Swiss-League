@@ -1,3 +1,4 @@
+const { logger } = require("../logger/logger");
 const tournamentDefault = require("./Tournaments-templates");
 
 require("dotenv").config();
@@ -42,15 +43,15 @@ class Tournament {
       fetch(`https://lichess.org/api/swiss/new/${this.teamID}`, options)
         .then((res) => res.json())
         .then((data) => {
+          logger.log({
+            level: "info",
+            message: data,
+            action: "Create Tournament",
+          });
+          return data;
+        })
+        .then((data) => {
           this.updateAPIOptions(data);
-
-          console.log(
-            `
-          ${new Date().toISOString()}
-          Starting Tournament
-          ID: ${data.id}
-          `
-          );
           resolve();
         });
     });
@@ -76,14 +77,15 @@ class Tournament {
       )
         .then((res) => res.json())
         .then((data) => {
+          logger.log({
+            level: "info",
+            message: data,
+            action: "Update Tournament",
+          });
+          return data;
+        })
+        .then((data) => {
           this.updateAPIOptions(data);
-          console.log(
-            `
-          ${new Date().toISOString()}
-          Updating Tournament
-          ID: ${data.id}
-          `
-          );
           resolve();
         });
     });
@@ -100,6 +102,14 @@ class Tournament {
 
     fetch(`https://lichess.org/api/swiss/${id}`, options)
       .then((res) => res.json())
+      .then((data) => {
+        logger.log({
+          level: "info",
+          message: data,
+          action: "Read Tournament",
+        });
+        return data;
+      })
       .then(console.log);
   }
 
@@ -116,6 +126,14 @@ class Tournament {
       options
     )
       .then((res) => res.json())
+      .then((data) => {
+        logger.log({
+          level: "info",
+          message: data,
+          action: "Terminate Tournament",
+        });
+        return data;
+      })
       .then(console.log);
   }
 
@@ -130,6 +148,14 @@ class Tournament {
 
       fetch(`https://lichess.org/api/team/${this.teamID}/swiss?max=1`, options)
         .then((res) => res.json())
+        .then((data) => {
+          logger.log({
+            level: "info",
+            message: data,
+            action: "Last Tournament",
+          });
+          return data;
+        })
         .then((data) => {
           this.updateAPIOptions(data);
           resolve();
