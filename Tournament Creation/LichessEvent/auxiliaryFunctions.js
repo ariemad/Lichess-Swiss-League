@@ -25,8 +25,6 @@ function waitStatus(id, status, cb) {
       method: "GET",
     };
     let intervalID = setInterval(() => {
-      console.log(`https://lichess.org/api/swiss/${id}`);
-
       fetch(`https://lichess.org/api/swiss/${id}`, options)
         .then((res) => res.json())
         .then((data) => {
@@ -54,7 +52,6 @@ function continuousCheckEnd(id, cb) {
     fetch(`https://lichess.org/api/swiss/${id}`, options)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.status == "finished") {
           cb();
         }
@@ -73,10 +70,23 @@ function parsePodium(winners) {
   return string;
 }
 
+function roundTime() {
+  let now = new Date();
+
+  if (now.getMinutes() <= 30) {
+    now.setHours(now.getHours() + 1, 0, 0, 0);
+  } else {
+    now.setHours(now.getHours() + 1, 30, 0, 0);
+  }
+
+  return now;
+}
+
 module.exports = {
   waitUntil,
   waitFor,
   waitStatus,
   continuousCheckEnd,
   parsePodium,
+  roundTime,
 };
