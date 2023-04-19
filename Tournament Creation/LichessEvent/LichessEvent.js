@@ -84,8 +84,15 @@ class LichessEvent {
   }
 
   repeatEvent() {
-    this.updateEvent();
-    setInterval(() => this.updateEvent(), 30000);
+    try {
+      this.updateEvent();
+      setInterval(() => this.updateEvent(), 30000);
+    } catch (error) {
+      console.error("Error occurred:", error);
+      setTimeout(() => {
+        repeatEvent();
+      }, 60000);
+    }
   }
 
   updateNumbering(tournament) {
