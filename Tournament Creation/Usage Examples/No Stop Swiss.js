@@ -44,4 +44,16 @@ According to number of players.
 
 myEvent.addTournamentSettings(settings);
 
-myEvent.start();
+function main() {
+  try {
+    myEvent.start();
+  } catch (error) {
+    console.error("Error occurred:", error);
+
+    setTimeout(() => {
+      main();
+    }, 60000);
+  }
+}
+
+main();
