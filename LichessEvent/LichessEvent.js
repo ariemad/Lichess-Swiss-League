@@ -84,13 +84,15 @@ class LichessEvent {
   }
 
   repeatEvent() {
+    let intervalID;
     try {
       this.updateEvent();
-      setInterval(() => this.updateEvent(), 30000);
+      intervalID = setInterval(() => this.updateEvent(), 30000);
     } catch (error) {
       console.error("Error occurred:", error);
+      clearInterval(intervalID);
       setTimeout(() => {
-        repeatEvent();
+        this.repeatEvent();
       }, 60000);
     }
   }
