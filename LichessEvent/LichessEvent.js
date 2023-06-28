@@ -44,8 +44,10 @@ class LichessEvent {
    */
   async startTournament(startsAt) {
     //Update event properties
-    this.updateNumbering(currentTournament);
-    await this.updateLastWinner(currentTournament);
+    let lastTournament = new Tournament(this.teamID);
+    await lastTournament.last();
+    this.updateNumbering(lastTournament);
+    await this.updateLastWinner(lastTournament);
 
     //Defining new tournament
     let newTournament = new Tournament(
