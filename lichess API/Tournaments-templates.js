@@ -1,3 +1,9 @@
+let eventDefault = {
+  numberTournaments: 1,
+  creationTime: "2023-01-01T00:00:00.000Z",
+  tournamentInterval: 300000,
+};
+
 let tournamentDefault = {
   name: null,
   clock: {
@@ -22,4 +28,4 @@ let tournamentDefault = {
   },
 };
 
-module.exports = tournamentDefault;
+module.exports = { tournamentDefault, eventDefault };

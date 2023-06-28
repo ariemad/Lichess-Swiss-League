@@ -6,25 +6,26 @@ const {
   waitFor,
   parsePodium,
   roundTime,
-} = require("./auxiliaryFunctions");
+} = require("../utils/auxiliaryFunctions");
+const { eventDefault } = require("../lichess API/Tournaments-templates");
 require("dotenv").config();
 
 class LichessEvent {
   constructor(teamID, eventOptions = {}) {
     this.teamID = teamID;
+
+    this.eventOptions = {
+      ...eventDefault,
+      ...eventOptions,
+    };
+
     this.eventProperties = {
       numberSettings: 0,
       tournamentCount: 0,
       numbering: undefined,
       lastWinners: undefined,
     };
-    this.eventOptions = {
-      repeat: false,
-      numbering: false,
-      tournamentInterval: 300000, //Milliseconds,
-      creationTime: "2000-01-01T00:00.000Z",
-      ...eventOptions,
-    };
+
     this.tournamentsSettings = [];
   }
 
@@ -33,7 +34,20 @@ class LichessEvent {
     this.eventProperties.numberSettings++;
   }
 
-  addTournament() {
+  /**
+   * My function description.
+   *
+   * @param {string} startsAt - The parameter that can have one of the following values:
+   *   - 'now': Starts now.
+   *   - 'interval': Starts after the interval defined in eventOptions.
+   *   - 'round': Rounds to the next 30 min or 60 min.
+   */
+  async startTournament(startsAt) {
+    //Update event properties
+    this.updateNumbering(currentTournament);
+    await this.updateLastWinner(currentTournament);
+
+    //Defining new tournament
     let newTournament = new Tournament(
       this.teamID,
       this.tournamentsSettings[
@@ -42,6 +56,7 @@ class LichessEvent {
       ]
     );
 
+    //Update name and description
     const replacements = {
       "#1#": this.eventProperties.numbering + 1, //Current Tournament
       "#2#": this.eventProperties.numbering + 2, //Next Tournament
@@ -59,15 +74,31 @@ class LichessEvent {
       );
     }
 
-    let API_Options = {
-      startsAt: new Date(
+    //Update Starts At
+    let replaceStartsAt;
+    if (startsAt === "now") {
+      replaceStartsAt = new Date(Date.now() + 5000).toISOString();
+      //
+    } else if (startsAt === "interval") {
+      replaceStartsAt = new Date(
         Date.now() + this.eventOptions.tournamentInterval
-      ).toISOString(),
+      ).toISOString();
+      //
+    } else if (startsAt === "round") {
+      replaceStartsAt = roundTime().toISOString();
+    }
+
+    let API_Options = {
+      startsAt: replaceStartsAt,
       name: replacedName,
       description: replacedDescription,
     };
 
+    //Update New Tournament
+
     newTournament.updateAPIOptions(API_Options);
+
+    //Start New Tournament
 
     newTournament.start();
     this.eventProperties.tournamentCount++;
@@ -78,7 +109,7 @@ class LichessEvent {
   async start() {
     await waitUntil(this.eventOptions.creationTime);
 
-    if (this.eventOptions.repeat) {
+    if (this.eventOptions.numberTournaments == Infinity) {
       this.repeatEvent();
     }
   }
@@ -117,28 +148,29 @@ class LichessEvent {
     await waitFor(1000);
 
     if (currentTournament.API_Options.status == "finished") {
-      this.updateNumbering(currentTournament);
-      await this.updateLastWinner(currentTournament);
-      this.addTournament();
+      this.startTournament("now");
       //
     } else if (currentTournament.API_Options.status == "created") {
       if (
-        currentTournament.API_Options.nextRound.in < 60 &&
-        currentTournament.API_Options.nbPlayers < 4
+        currentTournament.API_Options.nextRound.in < 65 &&
+        currentTournament.API_Options.nbPlayers < 6
       ) {
-        //1 minute before tournament starts
-        currentTournament.update({
-          startsAt: roundTime().toISOString(),
-        });
-      }
-      let newRound = Math.max(
-        3,
-        Math.ceil(Math.sqrt(currentTournament.API_Options.nbPlayers) + 1)
-      );
-      if (currentTournament.API_Options.nbRounds != newRound) {
-        currentTournament.update({
-          nbRounds: newRound,
-        });
+        //Delete tournament to remove inactive players
+        currentTournament.terminate();
+        await waitFor(1000);
+        this.startTournament("round");
+        //
+      } else {
+        //Update number of rounds
+        let newRound = Math.max(
+          4,
+          Math.ceil(Math.sqrt(currentTournament.API_Options.nbPlayers) + 1)
+        );
+        if (currentTournament.API_Options.nbRounds != newRound) {
+          currentTournament.update({
+            nbRounds: newRound,
+          });
+        }
       }
     }
   }

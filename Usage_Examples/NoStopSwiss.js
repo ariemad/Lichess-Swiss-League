@@ -1,34 +1,33 @@
 const LichessEvent = require("../LichessEvent/LichessEvent");
 
-let myEvent = new LichessEvent("chess-swiss-league", {
-  repeat: true,
+let eventsSettings = {
   numberTournaments: Infinity,
   creationTime: "2023-01-01T00:00:00.000Z",
-});
+};
 
-let settings = {
+let tournamentSettings = {
   name: "No Stop Swiss #1#",
   clock: {
     limit: 300,
     increment: 3,
   },
-  nbRounds: 5,
+  nbRounds: 4,
   startsAt: null,
   roundInterval: null,
   variant: "standard",
   description: `Welcome to "No Stop Swiss #1#"
-
-Last Tournament Winners were:
-#podium#
+  
+  Last Tournament Winners were:
+  #podium#
 
 We invite you to join "No Stop Swiss #2#" that will start immediately after.
 
 Minimum players to start:
-4
+6
 
 Number of rounds:
 According to number of players.
-    `,
+`,
   rated: true,
   password: null,
   forbiddenPairings: null,
@@ -42,6 +41,8 @@ According to number of players.
   },
 };
 
-myEvent.addTournamentSettings(settings);
+let myEvent = new LichessEvent("chess-swiss-league", eventsSettings);
+
+myEvent.addTournamentSettings(tournamentSettings);
 
 myEvent.start();
