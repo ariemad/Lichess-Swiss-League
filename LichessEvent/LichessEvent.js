@@ -38,6 +38,7 @@ class LichessEvent {
    * My function description.
    *
    * @param {string} startsAt - The parameter that can have one of the following values:
+   *   - 'default': According to tournament settings
    *   - 'now': Starts now.
    *   - 'interval': Starts after the interval defined in eventOptions.
    *   - 'round': Rounds to the next 30 min or 60 min.
@@ -91,10 +92,12 @@ class LichessEvent {
     }
 
     let API_Options = {
-      startsAt: replaceStartsAt,
       name: replacedName,
       description: replacedDescription,
     };
+    if (replaceStartsAt) {
+      API_Options.startsAt = replaceStartsAt;
+    }
 
     //Update New Tournament
 
@@ -104,30 +107,6 @@ class LichessEvent {
 
     newTournament.start();
     this.eventProperties.tournamentCount++;
-  }
-
-  updateTournament() {}
-
-  async start() {
-    await waitUntil(this.eventOptions.creationTime);
-
-    if (this.eventOptions.numberTournaments == Infinity) {
-      this.repeatEvent();
-    }
-  }
-
-  repeatEvent() {
-    let intervalID;
-    try {
-      this.updateEvent();
-      intervalID = setInterval(() => this.updateEvent(), 30000);
-    } catch (error) {
-      console.error("Error occurred:", error);
-      clearInterval(intervalID);
-      setTimeout(() => {
-        this.repeatEvent();
-      }, 60000);
-    }
   }
 
   updateNumbering(tournament) {
@@ -141,7 +120,33 @@ class LichessEvent {
     this.eventProperties.lastWinners = await tournament.results(undefined, 3);
   }
 
-  async updateEvent() {
+  async start() {
+    await waitUntil(this.eventOptions.creationTime);
+
+    if (this.eventOptions.repeat) {
+      this.repeatEvent();
+    } else {
+      this.scheduleEvent();
+    }
+  }
+
+  //RepeatEvent
+
+  repeatEvent() {
+    let intervalID;
+    try {
+      this.updateRepeatEvent();
+      intervalID = setInterval(() => this.updateRepeatEvent(), 30000);
+    } catch (error) {
+      console.error("Error occurred:", error);
+      clearInterval(intervalID);
+      setTimeout(() => {
+        this.repeatEvent();
+      }, 60000);
+    }
+  }
+
+  async updateRepeatEvent() {
     // Get current tournament of team
     let currentTournament = new Tournament(this.teamID);
     await currentTournament.last();
@@ -175,6 +180,12 @@ class LichessEvent {
         }
       }
     }
+  }
+
+  //ScheduledEvent
+
+  scheduleEvent() {
+    this.startTournament("default");
   }
 }
 

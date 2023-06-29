@@ -1,33 +1,21 @@
 const LichessEvent = require("../LichessEvent/LichessEvent");
 
 let eventsSettings = {
-  repeat: true,
+  repeat: false,
   creationTime: "2023-01-01T00:00:00.000Z",
 };
 
 let tournamentSettings = {
-  name: "No Stop Swiss #1#",
+  name: "My Event",
   clock: {
     limit: 300,
     increment: 3,
   },
   nbRounds: 4,
-  startsAt: null,
+  startsAt: "2023-01-02T00:00:00.000Z",
   roundInterval: null,
   variant: "standard",
-  description: `Welcome to "No Stop Swiss #1#"
-  
-  Last Tournament Winners were:
-  #podium#
-
-We invite you to join "No Stop Swiss #2#" that will start immediately after.
-
-Minimum players to start:
-6
-
-Number of rounds:
-According to number of players.
-`,
+  description: `This is the description of my event`,
   rated: true,
   password: null,
   forbiddenPairings: null,

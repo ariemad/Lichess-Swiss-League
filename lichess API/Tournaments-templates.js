@@ -1,5 +1,5 @@
 let eventDefault = {
-  numberTournaments: 1,
+  repeat: false,
   creationTime: "2023-01-01T00:00:00.000Z",
   tournamentInterval: 300000,
 };
