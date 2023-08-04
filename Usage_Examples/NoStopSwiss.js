@@ -23,7 +23,7 @@ let tournamentSettings = {
 We invite you to join "No Stop Swiss #2#" that will start immediately after.
 
 Minimum players to start:
-6
+4
 
 Number of rounds:
 According to number of players.

@@ -160,7 +160,8 @@ class LichessEvent {
     } else if (currentTournament.API_Options.status == "created") {
       if (
         currentTournament.API_Options.nextRound.in < 65 &&
-        currentTournament.API_Options.nbPlayers < 6
+        currentTournament.API_Options.nbPlayers < 4 &&
+        currentTournament.API_Options.nbPlayers > 0
       ) {
         //Delete tournament to remove inactive players
         currentTournament.terminate();
