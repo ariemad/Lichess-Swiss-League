@@ -158,16 +158,21 @@ class LichessEvent {
       this.startTournament("now");
       //
     } else if (currentTournament.API_Options.status == "created") {
-      if (
-        currentTournament.API_Options.nextRound.in < 65 &&
-        currentTournament.API_Options.nbPlayers < 4 &&
-        currentTournament.API_Options.nbPlayers > 0
-      ) {
+      if (currentTournament.API_Options.nextRound.in < 65) {
+        if (
+          currentTournament.API_Options.nbPlayers < 4 &&
+          currentTournament.API_Options.nbPlayers > 0
+        ) {
+        }
         //Delete tournament to remove inactive players
         currentTournament.terminate();
         await waitFor(1000);
         this.startTournament("round");
         //
+      } else if (currentTournament.API_Options.nbPlayers == 0) {
+        currentTournament.update({
+          startsAt: roundTime().toISOString(),
+        });
       } else {
         //Update number of rounds
         let newRound = Math.max(
