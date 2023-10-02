@@ -1,0 +1,2 @@
+check process swissLeagueTournamentCreation with pidfile /home/ubuntu/lichess-swiss-league-tournament-creation/pidfile.pid
+  if does not exist then alert

@@ -1,0 +1,12 @@
+set daemon 120             # check services at 120 seconds intervals
+
+set httpd port 2812     #Set web page
+allow localhost 
+allow 1.2.3.4 # allow external ips
+
+set log /var/log/monit.log
+
+check system swissLeagueSystem
+
+include /etc/monit/conf.d/*
+include /etc/monit/conf-enabled/*
